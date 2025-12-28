@@ -12,7 +12,11 @@
         <vm:MainWindowViewModel />
     </Window.DataContext>
 
-    <Grid RowDefinitions="Auto,Auto,*">
+    <Window.InputBindings>
+        <KeyBinding Key="L" Modifiers="Control" Command="{Binding LoadCommand}" />
+    </Window.InputBindings>
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
         <Grid Grid.Row="0" RowDefinitions="30,30" ColumnDefinitions="*,*,*,*">
             <Grid.Resources>
                 <Style TargetType="TextBox">
@@ -41,5 +45,9 @@
             <svgc:SvgBitmap Grid.Column="0" SvgSource="{Binding ShippingLabelSvg}" Margin="5" />
             <svgc:SvgBitmap Grid.Column="1" SvgSource="{Binding ReceiptSvg}" Margin="5" />
         </Grid>
+
+        <StatusBar Grid.Row="3">
+            <StatusBarItem Content="{Binding Status}" />
+        </StatusBar>
     </Grid>
 </Window>
