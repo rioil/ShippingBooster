@@ -3,18 +3,19 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using SharpVectors.Converters;
+using ShippingBooster.Models.Printer;
 
-namespace ShippingBooster.Models.Print;
+namespace ShippingBooster.Models.PrintDispatcher;
 
-public class Printer(string printQueueName)
+public class XpsDocumentPrintDispatcher(string printQueueName) : IPrintDispatcher
 {
-    public void Print(string svg)
+    public void Dispatch(IPrinter printer, string markdown)
     {
         var printServer = new LocalPrintServer();
         var queue = printServer.GetPrintQueue(printQueueName);
         var writer = PrintQueue.CreateXpsDocumentWriter(queue);
 
-        const double lengthInMm = 120;
+        const double lengthInMm = 200;
         const double widthInMm = 58;
         const double printableWidthInMm = 48;
         var ticket = queue.DefaultPrintTicket;
@@ -31,6 +32,8 @@ public class Printer(string printQueueName)
             Width = ConvertMmToPx(printableWidthInMm),
             HorizontalAlignment = HorizontalAlignment.Center
         };
+
+        var svg = printer.CreateSvg(markdown);
         AddSvg(svg, grid);
         page.Children.Add(grid);
 

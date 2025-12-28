@@ -3,8 +3,9 @@ using System.Windows;
 using System.Windows.Media.Imaging;
 using Livet;
 using Livet.Commands;
-using ShippingBooster.Models.Booth;
-using ShippingBooster.Models.Print;
+using ShippingBooster.Models.Markdown.Booth;
+using ShippingBooster.Models.PrintDispatcher;
+using ShippingBooster.Models.Printer;
 using ZXing;
 using ZXing.Windows.Compatibility;
 
@@ -63,22 +64,27 @@ public class MainWindowViewModel : ViewModel
 
     private void Preview()
     {
+        var printer = new MPT2Printer();
+        
         var labelCreator = new BoothShippingLabelCreator();
-        ShippingLabelSvg = labelCreator.Create(OrderNo, OrderDate, ShippingCode, ShippingReceiptNo, ShippingPassword);
+        var labelMarkdown = labelCreator.Create(OrderNo, OrderDate, ShippingCode, ShippingReceiptNo, ShippingPassword);
+        ShippingLabelSvg = printer.CreateSvg(labelMarkdown);
 
         var receiptCreator = new BoothReceiptCreator();
-        ReceiptSvg = receiptCreator.Create(OrderNo, "🧈1");
+        var receiptMarkdown = receiptCreator.Create(OrderNo, "🧈1");
+        ReceiptSvg = printer.CreateSvg(receiptMarkdown);
     }
 
     public ViewModelCommand PreviewCommand => field ??= new ViewModelCommand(Preview);
 
     private void PrintShippingLabel()
     {
-        if (ShippingLabelSvg == null) return;
-        
         SetStatus("Printing shipping label...");
-        var printer = new Printer("POS58 Printer BT");
-        printer.Print(ShippingLabelSvg);
+        var creator = new BoothShippingLabelCreator();
+        var markdown = creator.Create(OrderNo, OrderDate, ShippingCode, ShippingReceiptNo, ShippingPassword);
+        var dispatcher = new XpsDocumentPrintDispatcher("POS58 Printer BT");
+        var printer = new MPT2Printer();
+        dispatcher.Dispatch(printer, markdown);
         SetStatus("Printed shipping label.");
     }
 
@@ -89,8 +95,11 @@ public class MainWindowViewModel : ViewModel
         if (ReceiptSvg == null) return;
         
         SetStatus("Printing receipt...");
-        var printer = new Printer("POS58 Printer BT");
-        printer.Print(ReceiptSvg);
+        var creator = new BoothReceiptCreator();
+        var markdown = creator.Create(OrderNo, "🧈1");
+        var dispatcher = new XpsDocumentPrintDispatcher("POS58 Printer BT");
+        var printer = new MPT2Printer();
+        dispatcher.Dispatch(printer, markdown);
         SetStatus("Printed receipt.");
     }
 
