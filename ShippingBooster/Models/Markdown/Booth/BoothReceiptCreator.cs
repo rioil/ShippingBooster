@@ -18,18 +18,17 @@ public class BoothReceiptCreator
                         {width:auto}
                         📜"「Butter」について"📜
                         
-                        |アバター「Butter」の著作権は
-                        |Polygonal Mind が保有しています
-                        |オリジナルデータは CC BY 4.0
-                        |ライセンスの下で配布されています
-
-                        |このストラップは、オリジナルデータを参考に3Dプリント用データを独自に作成して印刷したものです
+                        100Avatars\_083
+                        ©Polygonal Mind
+                        ライセンス：CC BY 4.0
 
                         オリジナルデータ
                         { code: https://github.com/PolygonalMind/100Avatars/tree/master/100Avatars\_083; option: qrcode,4 }
 
-                        ライセンス（CC BY 4.0）
+                        ライセンス
                         { code: https://github.com/PolygonalMind/100Avatars/blob/master/CCLicense.md; option: qrcode,4 }
+                        
+                        |このストラップは、オリジナルデータを参考に3Dプリント用データを独自に作成して印刷したものです
                         -
                         {width:auto}
                         📋"アンケート"📋
