@@ -13,11 +13,13 @@ namespace ShippingBooster.ViewModels;
 
 public class MainWindowViewModel : ViewModel
 {
+    public static string[] AvailableItems { get; } = [ "🧈1", "🧈1 + 🔨片面", "🧈1 + 🔨両面" ];
+    
     public string OrderNo
     {
         get;
         set => RaisePropertyChangedIfSet(ref field, value);
-    } = "Order-0123456789";
+    } = string.Empty;
 
     public DateTime OrderDate
     {
@@ -29,19 +31,25 @@ public class MainWindowViewModel : ViewModel
     {
         get;
         set => RaisePropertyChangedIfSet(ref field, value);
-    } = "SC-9876543210";
+    } = string.Empty;
 
     public string ShippingReceiptNo
     {
         get;
         set => RaisePropertyChangedIfSet(ref field, value);
-    } = "SRN-1234567890";
+    } = string.Empty;
 
     public string ShippingPassword
     {
         get;
         set => RaisePropertyChangedIfSet(ref field, value);
-    } = "password123";
+    } = string.Empty;
+
+    public string OrderItem
+    {
+        get;
+        set => RaisePropertyChangedIfSet(ref field, value);
+    } = AvailableItems[0];
 
     public string? ShippingLabelSvg
     {
@@ -71,7 +79,7 @@ public class MainWindowViewModel : ViewModel
         ShippingLabelSvg = printer.CreateSvg(labelMarkdown);
 
         var receiptCreator = new BoothReceiptCreator();
-        var receiptMarkdown = receiptCreator.Create(OrderNo, "🧈1");
+        var receiptMarkdown = receiptCreator.Create(OrderNo, OrderItem);
         ReceiptSvg = printer.CreateSvg(receiptMarkdown);
     }
 
@@ -79,6 +87,8 @@ public class MainWindowViewModel : ViewModel
 
     private void PrintShippingLabel()
     {
+        if (ShippingLabelSvg == null) return;
+        
         SetStatus("Printing shipping label...");
         var creator = new BoothShippingLabelCreator();
         var markdown = creator.Create(OrderNo, OrderDate, ShippingCode, ShippingReceiptNo, ShippingPassword);
@@ -96,7 +106,7 @@ public class MainWindowViewModel : ViewModel
         
         SetStatus("Printing receipt...");
         var creator = new BoothReceiptCreator();
-        var markdown = creator.Create(OrderNo, "🧈1");
+        var markdown = creator.Create(OrderNo, OrderItem);
         var dispatcher = new XpsDocumentPrintDispatcher("POS58 Printer BT");
         var printer = new MPT2Printer();
         dispatcher.Dispatch(printer, markdown);
@@ -105,12 +115,25 @@ public class MainWindowViewModel : ViewModel
 
     public ViewModelCommand PrintReceiptCommand => field ??= new ViewModelCommand(PrintReceipt);
 
-    private void Load()
+    private async void Load()
     {
         if (!Clipboard.ContainsText()) return;
         var url = Clipboard.GetText();
         if (string.IsNullOrEmpty(url)) return;
-        var image = new BitmapImage(new Uri(url));
+        Uri uri;
+        try
+        {
+            uri = new Uri(url);
+        }
+        catch (UriFormatException)
+        {
+            Status = "Clipboard does not contain a valid URL.";
+            return;
+        }
+        var image = new BitmapImage(uri);
+        
+        // Wait for the image to load
+        await Task.Delay(TimeSpan.FromMilliseconds(500));
 
         var reader = new BarcodeReader()
         {
@@ -123,6 +146,12 @@ public class MainWindowViewModel : ViewModel
             return;
         }
         ShippingCode = result.Text;
+        var splits = ShippingCode.Split().Where(s => !string.IsNullOrEmpty(s)).ToArray();
+        if (splits.Length >= 3)
+        {
+            ShippingReceiptNo = splits[1];
+            ShippingPassword = splits[2];
+        }
         SetStatus("Loaded shipping code from clipboard.");
     }
 
