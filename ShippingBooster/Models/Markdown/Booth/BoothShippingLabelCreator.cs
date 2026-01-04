@@ -6,11 +6,8 @@ public class BoothShippingLabelCreator
         string shippingPassword)
     {
         var content = $$"""
-                        -
-                        *
                         貼り付け
-                        *
-                        -
+                        =
 
                         {width:10,20}
                         -
@@ -26,12 +23,9 @@ public class BoothShippingLabelCreator
                         {width:10,20}
                         受付番号 | {{shippingReceiptNo}}
                         パスワード | {{shippingPassword}}
-                        -
+                        =
                         {width:auto}
-                        *
                         貼り付け
-                        *
-                        -
                         """;
 
         return content;
