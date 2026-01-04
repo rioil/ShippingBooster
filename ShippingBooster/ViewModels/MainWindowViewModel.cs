@@ -13,8 +13,9 @@ namespace ShippingBooster.ViewModels;
 
 public class MainWindowViewModel : ViewModel
 {
-    public static string[] AvailableItems { get; } = [ "🧈1", "🧈1 + 🔨片面", "🧈1 + 🔨両面" ];
-    
+    public static string[] AvailableItems { get; } =
+        ["🧈1", "🧈1 + 🔨片面", "🧈1 + 🔨両面", "🧈2", "🧈2 + 🔨片面", "🧈2 + 🔨両面"];
+
     public string OrderNo
     {
         get;
@@ -73,7 +74,7 @@ public class MainWindowViewModel : ViewModel
     private void Preview()
     {
         var printer = new MPT2Printer();
-        
+
         var labelCreator = new BoothShippingLabelCreator();
         var labelMarkdown = labelCreator.Create(OrderNo, OrderDate, ShippingCode, ShippingReceiptNo, ShippingPassword);
         ShippingLabelSvg = printer.CreateSvg(labelMarkdown);
@@ -88,7 +89,7 @@ public class MainWindowViewModel : ViewModel
     private void PrintShippingLabel()
     {
         if (ShippingLabelSvg == null) return;
-        
+
         SetStatus("Printing shipping label...");
         var creator = new BoothShippingLabelCreator();
         var markdown = creator.Create(OrderNo, OrderDate, ShippingCode, ShippingReceiptNo, ShippingPassword);
@@ -103,7 +104,7 @@ public class MainWindowViewModel : ViewModel
     private void PrintReceipt()
     {
         if (ReceiptSvg == null) return;
-        
+
         SetStatus("Printing receipt...");
         var creator = new BoothReceiptCreator();
         var markdown = creator.Create(OrderNo, OrderItem);
@@ -130,8 +131,9 @@ public class MainWindowViewModel : ViewModel
             Status = "Clipboard does not contain a valid URL.";
             return;
         }
+
         var image = new BitmapImage(uri);
-        
+
         // Wait for the image to load
         await Task.Delay(TimeSpan.FromMilliseconds(500));
 
@@ -145,6 +147,7 @@ public class MainWindowViewModel : ViewModel
             SetStatus("Failed to read QR code.");
             return;
         }
+
         ShippingCode = result.Text;
         var splits = ShippingCode.Split().Where(s => !string.IsNullOrEmpty(s)).ToArray();
         if (splits.Length >= 3)
@@ -152,6 +155,7 @@ public class MainWindowViewModel : ViewModel
             ShippingReceiptNo = splits[1];
             ShippingPassword = splits[2];
         }
+
         SetStatus("Loaded shipping code from clipboard.");
     }
 
