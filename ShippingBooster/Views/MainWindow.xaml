@@ -17,18 +17,14 @@
         <vm:MainWindowViewModel />
     </mah:MetroWindow.DataContext>
 
-    <mah:MetroWindow.InputBindings>
-        <KeyBinding Key="L" Modifiers="Control" Command="{Binding LoadCommand}" />
-    </mah:MetroWindow.InputBindings>
-
     <Grid Margin="10" RowDefinitions="Auto,Auto,*,Auto">
         <!-- 入力フォームセクション -->
         <GroupBox Grid.Row="0" Header="注文情報" Margin="0,0,0,10" Padding="15">
-            <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" ColumnDefinitions="120,*,120,*">
+            <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="120,*">
 
                 <!-- 注文番号 -->
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="注文番号:" VerticalAlignment="Center" Margin="0,5" />
-                <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3"
+                <TextBox Grid.Row="0" Grid.Column="1"
                          Text="{Binding OrderNo, UpdateSourceTrigger=PropertyChanged}"
                          mah:TextBoxHelper.ClearTextButton="True"
                          mah:TextBoxHelper.Watermark="注文番号を入力"
@@ -36,36 +32,19 @@
 
                 <!-- 注文日 -->
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="注文日:" VerticalAlignment="Center" Margin="0,5" />
-                <DatePicker Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"
+                <DatePicker Grid.Row="1" Grid.Column="1"
                             SelectedDate="{Binding OrderDate}"
                             Margin="5" />
 
-                <!-- 配送コード -->
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="配送コード:" VerticalAlignment="Center" Margin="0,5" />
-                <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3"
-                         Text="{Binding ShippingCode, UpdateSourceTrigger=PropertyChanged}"
-                         mah:TextBoxHelper.ClearTextButton="True"
-                         mah:TextBoxHelper.Watermark="配送コードを入力"
-                         Margin="5" />
-
-                <!-- レシート番号と伝票パスワード -->
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="レシート番号:" VerticalAlignment="Center" Margin="0,5" />
-                <TextBox Grid.Row="3" Grid.Column="1"
-                         Text="{Binding ShippingReceiptNo, UpdateSourceTrigger=PropertyChanged}"
-                         mah:TextBoxHelper.ClearTextButton="True"
-                         mah:TextBoxHelper.Watermark="レシート番号"
-                         Margin="5" />
-
-                <TextBlock Grid.Row="3" Grid.Column="2" Text="伝票パスワード:" VerticalAlignment="Center" Margin="0,5" />
-                <TextBox Grid.Row="3" Grid.Column="3"
-                         Text="{Binding ShippingPassword, UpdateSourceTrigger=PropertyChanged}"
-                         mah:TextBoxHelper.ClearTextButton="True"
-                         mah:TextBoxHelper.Watermark="パスワード"
-                         Margin="5" />
+                <!-- データ受付日 -->
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="データ受付日:" VerticalAlignment="Center" Margin="0,5" />
+                <DatePicker Grid.Row="2" Grid.Column="1"
+                            SelectedDate="{Binding DataReceivedDate}"
+                            Margin="5" />
 
                 <!-- 注文内容 -->
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="注文内容:" VerticalAlignment="Center" Margin="0,5" />
-                <ComboBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="3" ItemsSource="{Binding AvailableItems}"
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="注文内容:" VerticalAlignment="Center" Margin="0,5" />
+                <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding AvailableItems}"
                           SelectedItem="{Binding OrderItem}" Margin="5" />
             </Grid>
         </GroupBox>
